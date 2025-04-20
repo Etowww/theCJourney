@@ -1,0 +1,10 @@
+# TheCJourney DBTow .gitignore
+
+# Ignore all files (*)
+*
+
+# Whitelisted file types
+!*.c
+!*.h
+!*.md
+!.gitignore

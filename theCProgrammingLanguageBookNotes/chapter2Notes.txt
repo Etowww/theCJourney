@@ -1,5 +1,0 @@
-// The C Programming Language 2nd Edition Book //
-
-// Personal Notes by DBTow //
-
-[Chapter 2 - Types, Operators, and Expressions]
