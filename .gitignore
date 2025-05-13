@@ -1,6 +1,7 @@
 # TheCJourney DBTow .gitignore
 
 # Ignore all files (*)
+# Attempting to make sure no unwanted files or executables appear in the online repository
 *
 
 # Whitelisted file types
@@ -8,3 +9,6 @@
 !*.h
 !*.md
 !.gitignore
+
+# Allow directories
+!*/
