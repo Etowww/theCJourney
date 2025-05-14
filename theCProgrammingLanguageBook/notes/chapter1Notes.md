@@ -228,5 +228,175 @@ Among others... printf() also recognizes:
 
 ## 1.3 The for statement
 
+To show that there are different ways to write a program we are going to code a new variation of the temperature converter using a for statement
+
+**Code can be found at ~/theCProgrammingLanguageBook/examplePrograms/chapter1Programs/forTemp.c**
+
+One major change is the elimination of most of the variables... only fahr remains and we have made it an int
+-The lower and upper limits and the step size appear only as constants in the for statement
+-The expression that computes the Celsius temperature now appears as the third argument of printf() instead of a separate assignment statement
+
+Pertaining to the last change...
+-In any context where it is permissible to use the value of some type, you can use a more complicated expression of that type
+-> Since the third argument of printf must be a floating-point value to match the %6.1f, any floating point expression can occur here
+
+The *for* statement is a loop... a generalization of the *while* loop.
+
+For loops have three parts separated by semicolons (;)
+-Initialization
+`fahr = 0`
+This is done once before the loop proper is entered
+
+-Test or Condition
+This is the second part that controls the loop
+`fahr <= 300`
+This condition is evaluated... if it is true the body of the loop is executed then the last part of the loop occurs ->
+
+-Increment step
+`fahr = fahr + 20`
+This gets executed and then the condition is re-evaluated...
+
+The loop terminates if the condition has become false
+
+Similar to *while* the body of the loop can be a single statement or a group of statements enclosed in braces
+-The initialization / condition / and increment can be any expression
+
+The choice between while and for loops is arbitrary, based on which seems clearer...
+-The for is usually appropriate for loops in which the initialization and increment are single statements and logically related
+
+---
+
+## 1.4 Symbolic Constants
+
+Its bad practice to bury "magic numbers" like 300 and 20 in a program... they convey little information to someone trying to read the program
+-They are also hard to change in a systematic way
+
+One way to deal with magic numbers is to give them meaningful names... a #define line defines a *symbolic name* or *symbolic constant* to be a particular string of characters:
+`#define` *name* *replacement list*
+
+Thereafter, any occur of the *name* (not in quotes and not part of another name) will be replaced by the corresponding *replacement list*
+
+The *name* has the same form as a variable... a sequence of letters and digits beginning with a letter
+The *replacement list* can be any sequence of characters... it is not limited to numbers
+
+**code can be found at ~/theCProgrammingLanguageBook/examplePrograms/chapter1Programs/symbolicTemp.c**
+
+The quantities LOWER, UPPER, and STEP are symbolic constants NOT variables, so they do not appear in declarations
+
+Symbolic constants are traditionally written in uppercase to be distinguishable from regular variables (lower case)
+-Note that there is no semicolon at the end of a #define line
+
+---
+
+## 1.5 Character Input and Output
+The model of input and output supported by the standard library is very simple... ->
+
+Text input or output (regardless of where its going to) is dealt with as streams of characters
+
+A *text stream* is a sequence of characters divided into lines...
+-Each line consists of zero or more characters followed by a newline character
+
+It is the responsibility of the library to make each input or output stream confirm this model...
+-The C programmer need not wory about how lines are represented outside the program
+
+The standard library provides several functions for reading or writing one characterat a time, of which *getchar* and *putchar* are the simplest
+
+Each time it is called *getchar* reads the next input character from a text stream and returns that as its value
+
+`c = getchar();`
+-The variable c contains the next character of input
+-The characters normally come from the keyboard
+
+The function *putchar* prints a character each time it is called
+
+`putchar(c);`
+-prints the contents of the integer variable c as a character, usually on screen
+
+Calls to putchar() and printf() may be interleaved the output will just appear in the order in which the calls are made
+
+### 1.5.1 File Copying
+You can write a suprising amount of useful code without knowing anything more about input and output (getchar and putchar)
+
+The next example program copies its input to its output one character at a time
+
+**can view this code at ~/theCProgrammingLanguageBook/examplePrograms/chapter1Programs/fileCopying.c**
+
+The relational operator != means "not equal to"
+
+What appears to be a character on the keyboard or screen is of course, like everything, stored internally just as a bit pattern
+
+The type *char* is specifically meant for storing such character data (however any integer type can be used)
+
+We used *int* for a subtle but important reason
+-The problem is distinguishing the end of input from valid data... the solution is that *getchar* returns a distinctive value when there is no more input...
+a variable that cannot be confused with any real character
+
+This value is called *EOF* or "end of file"
+-We must declare the variable c to be a type big enough to hold any value that *getchar* returns
+
+We can't use the type *char* because the variable c must be big enough to hold EOF in addition to any possible *char*... therefore we use the type *int*
+
+EOF is an integer defined in <stdio.h>, but the specific numeric value doesn't matter as long as it is not the same as any *char* value
+EOF is also a symbolic constant
+-By using the symbolic constant, we are assured that nothing in the program depends on the specific numeric value
 
 
+The program could be written more concisely:
+
+`#include <stdio.h>
+
+/* copy input to output; 2nd version */
+int main()
+{
+    int c;
+
+    while ((c = getchar()) != EOF)
+        putchar(c);
+}
+`
+
+`c = getchar()` is an expression and has a value
+-This means we can use this assignment as part of a larger expression
+
+We put the assignment of the character inside the test part of the while loop
+-The *while* get a character, assigns it to c, and then tests whether the character was the end-of-file signal...
+-If its not the body of the while is executed, printing the character(putchar), then the *while* repeats
+
+When the end of the input is finally reached, the *while* terminates and so does *main*
+
+This version centralizes the input... now only one reference to getchar()
+
+The parentheses around the assignment, within the condition are necessary...
+-The *precedence* of != is higher than that of =
+
+This means that in absence of parentheses the relational test != would be done before the assginment =
+-The statement `c = getchar() != EOF` is equivalent to `c = (getchar() != EOF)
+-This has the undesired effect of setting C to 0 or 1 depending on whether or not the call of getchar returned end of file
+
+---
+
+### 1.5.2 Character Counting
+
+The next program counts characters
+
+**Can view this program at ~/theCProgrammingLanguageBook/exampleProgram/chapter1Programs/charCount.c**
+
+The statement `++nc;` presents a new operator `++` which means increment by one
+-You could write `nc = nc + 1` but `++nc` is more concise and often more efficient
+
+There is a corresponding operator `--` to decrement by one
+
+The operators ++ and -- can be either prefix operators (++nc) or postfix operators (nc++)
+-These two forms have different values in expressions
+-For the moment we will stick to the prefix form
+
+The character counting program accumulates its count in a variable type *long* instead of an *int*
+-Long integers are at least 32 bits
+-On some machines int and long are the same size... On others an int is 16 bits, with a maximum value of 32767
+It would take relatively low input to overflow an int counter
+
+The conversion specification %1d tells printf that corresponding argument is a *long* integer
+
+-It may be possible to cope with even bigger numbers by using a type *double* (double precision float)
+
+We can also use a for statement instead of a while, to illustrate the program in another way.
